@@ -14,7 +14,7 @@ Simple blinking LED on Arduino Nano (pin 9). First embedded project.
 - LED cathode → resistor ~970 Ω
 - Resistor other end → GND
 
-![Wokwi schematic](images/wokwi_schematic.png)
+![Wokwi schematic](images/Wokwi_schematic.png)
 
 ## Code
 See [01_blink.ino](01_blink.ino)
