@@ -121,7 +121,7 @@ void loop() {
 
 [Weather station video](https://youtube.com/shorts/64V0xcmnG_Y)
 
-*(Replace `YOUR_VIDEO_ID` with the actual ID of your YouTube Shorts video)*
+
 
 ## What I Learned
 
