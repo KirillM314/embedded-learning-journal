@@ -20,6 +20,18 @@ const byte RightRearIN4  = 9;
 const byte TRIGPIN = 10;
 const byte ECHOPIN = 11;
 
+// время для объезда
+const int STOP_DURATION = 300; // останавливаем моторы если есть препятствие 
+const int BACK_DURATION = 500; // время отъезда назад 
+const int TURN_LEFT_DURATION = 400; // время поворота
+
+// Для неблокирующего измерения
+unsigned long lastMeasureTime = 0;
+const unsigned long MEASURE_INTERVAL = 100; // измерять расстояние раз в 100 мс
+
+// значение расстояния до объекта (начальное значение)
+float dist = 500; // берём начальное расстояние до объекта 500 см с запасом, поскольку 400 см это предел для датчика HC-SR04
+
 void setup() {
   // Set all pins as outputs
   pinMode(LeftFrontIN1, OUTPUT);
@@ -85,6 +97,20 @@ void stopMotors() {
   digitalWrite(RightRearIN4,  LOW);
 }
 
+// ПОВОРОТ НАЛЕВО (на месте) 
+void turnLeft() {
+  // Левые колёса назад, правые вперёд
+  digitalWrite(LeftFrontIN1, HIGH);
+  digitalWrite(LeftFrontIN2, LOW);
+  digitalWrite(LeftRearIN3,  HIGH);
+  digitalWrite(LeftRearIN4,  LOW);
+  
+  digitalWrite(RightFrontIN1, LOW);
+  digitalWrite(RightFrontIN2, HIGH);
+  digitalWrite(RightRearIN3,  LOW);
+  digitalWrite(RightRearIN4,  HIGH);
+}
+
 // MEASURE DISTANCE
 float getDistance() {
   // Trigger cleanup
@@ -99,14 +125,19 @@ float getDistance() {
   float distance = (duration * 0.0343) / 2; // calculate distance in cm
   
   if (duration == 0) return 999;  // no echo
-  return distance;
+  return distance; // если получено конкреное расстояние (то есть датчик выдал какое-то значение), то возвращаем значение расстояния до объекта
 }
 
 void loop() {
   forward();  // drive forward
-  
-  float dist = getDistance();
-  
+  unsigned long currentTime = micros();
+  if (currentTime - lastMeasureTime >= MEASURE_INTERVAL) {
+    lastMeasureTime = currentTime;
+    float NEW_dist = getDistance();
+    if (NEW_dist != 999) {
+      dist = NEW_dist;
+    }
+  }
   // Debug output
   if (dist < 400) {
     Serial.print("Distance: ");
@@ -119,17 +150,26 @@ void loop() {
     // measurement range of HC-SR04
     if (dist < 10.0) { 
       // Emergency – too close
+      // отъезжаем на расстояние примерно 30 см (безопасное расстояние)
       stopMotors();
-      delay(500);
       backward();
       delay(1500);
+
+      // Теперь выполняем стандартный объезд (как при 10–30 см)
+      delay(STOP_DURATION);
+      backward();
+      delay(BACK_DURATION);
+      turnLeft();
+      delay(TURN_LEFT_DURATION);
     }
     else if (dist <= 30.0) {
       // Obstacle at 10–30 cm
       stopMotors();
-      delay(2000);
+      delay(STOP_DURATION);
       backward();
-      delay(1000);
+      delay(BACK_DURATION);
+      turnLeft();
+      delay(TURN_LEFT_DURATION);
     }
   }
   
