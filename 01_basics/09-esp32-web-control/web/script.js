@@ -11,6 +11,9 @@ const buttonOff = document.getElementById("buttonOff");
 
 const communicationStatus = document.getElementById("communicationStatus");
 
+const ledIndicator = document.getElementById("ledIndicator")
+const ledStatus = document.getElementById("ledStatus")
+
 buttonOn.addEventListener(
     "click",
     () => {
@@ -23,8 +26,10 @@ buttonOn.addEventListener(
             () => {
                 communicationStatus.textContent = "Communication: Command sent";
             },
-            3000
+            1000
         );
+        ledIndicator.style.backgroundColor = "green";
+        ledStatus.textContent = "ON";
     }
 );
 buttonOff.addEventListener(
@@ -39,7 +44,9 @@ buttonOff.addEventListener(
             () => {
                 communicationStatus.textContent = "Communication: Command sent";
             },
-            3000
+            1000
         );
+        ledIndicator.style.backgroundColor = "gray";
+        ledStatus.textContent = "OFF";
     }
 );
