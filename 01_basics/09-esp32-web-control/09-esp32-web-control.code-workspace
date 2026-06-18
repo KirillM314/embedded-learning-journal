@@ -1,0 +1,12 @@
+{
+	"folders": [
+		{
+			"path": "09-esp32-web-control"
+		},
+		{
+			"name": "ESP32",
+			"path": "09-esp32-web-control/ESP32"
+		}
+	],
+	"settings": {}
+}

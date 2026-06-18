@@ -17,6 +17,8 @@ const ledStatus = document.getElementById("ledStatus")
 buttonOn.addEventListener(
     "click",
     () => {
+        fetch("http://192.168.1.101/ledOn");
+
         OnCount++;
         ButtonCountOn.textContent = "ON press count: " + OnCount;
         buttonstatus.textContent = "Button Status: ON";
@@ -35,6 +37,9 @@ buttonOn.addEventListener(
 buttonOff.addEventListener(
     "click",
     () => {
+
+        fetch("http://192.168.1.101/ledOff");
+
         OffCount++;
         ButtonCountOff.textContent = "OFF press count: " + OffCount;
         buttonstatus.textContent = "Button Status: OFF";
