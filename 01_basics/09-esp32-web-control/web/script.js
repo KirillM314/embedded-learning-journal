@@ -17,41 +17,35 @@ const ledStatus = document.getElementById("ledStatus")
 buttonOn.addEventListener(
     "click",
     () => {
-        fetch("http://192.168.1.101/ledOn");
-
         OnCount++;
         ButtonCountOn.textContent = "ON press count: " + OnCount;
-        buttonstatus.textContent = "Button Status: ON";
-        console.log("LED_ON");
-        communicationStatus.textContent = "Communication: Sending LED_ON...";
-        setTimeout(
-            () => {
-                communicationStatus.textContent = "Communication: Command sent";
-            },
-            1000
-        );
-        ledIndicator.style.backgroundColor = "green";
-        ledStatus.textContent = "ON";
+        communicationStatus.textContent = "Communication: Sending ledOn...";
+        fetch("http://192.168.1.101/ledOn")
+            .then(response => response.text())
+            .then(data => {
+                console.log(data);
+                buttonstatus.textContent = "Button Status: ON";
+                communicationStatus.textContent = "Communication: successful sending";
+                ledIndicator.style.backgroundColor = "green";
+                ledStatus.textContent = "ON";
+            });
     }
 );
 buttonOff.addEventListener(
     "click",
     () => {
-
-        fetch("http://192.168.1.101/ledOff");
-
         OffCount++;
         ButtonCountOff.textContent = "OFF press count: " + OffCount;
-        buttonstatus.textContent = "Button Status: OFF";
-        console.log("LED_OFF");
-        communicationStatus.textContent = "Communication: Sending LED_OFF...";
-        setTimeout(
-            () => {
-                communicationStatus.textContent = "Communication: Command sent";
-            },
-            1000
-        );
-        ledIndicator.style.backgroundColor = "gray";
-        ledStatus.textContent = "OFF";
+        communicationStatus.textContent = "Communication: Sending ledOff...";
+        fetch("http://192.168.1.101/ledOff")
+            .then(response => response.text())
+            .then(data => {
+                console.log(data);
+                buttonstatus.textContent = "Button Status: OFF";
+                communicationStatus.textContent = "Communication: successful sending";
+                ledIndicator.style.backgroundColor = "gray";
+                ledStatus.textContent = "OFF";
+            });
     }
 );
+

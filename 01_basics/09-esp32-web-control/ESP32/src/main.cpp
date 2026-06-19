@@ -4,8 +4,8 @@
 
 #define LED_pin 2
 
-#define net_name "Your net_name"
-#define password "Your password"
+#define net_name "UKYV"
+#define password "igor2616"
 
 WebServer server(80);
 
@@ -13,9 +13,13 @@ bool WiFi_flag = 0;
 
 void handleLedOn() {
     digitalWrite(LED_pin, HIGH);
+    server.sendHeader("Access-Control-Allow-Origin", "*");
+    server.send(200, "text/plain", "LED_ON");
 }
 void handleLedOff() {
     digitalWrite(LED_pin, LOW);
+    server.sendHeader("Access-Control-Allow-Origin", "*");
+    server.send(200, "text/plain", "LED_OFF");
 }
 
 void setup() {
