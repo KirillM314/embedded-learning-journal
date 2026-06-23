@@ -18,34 +18,50 @@ buttonOn.addEventListener(
     "click",
     () => {
         OnCount++;
+        buttonstatus.textContent = "Button Status: ON";
         ButtonCountOn.textContent = "ON press count: " + OnCount;
         communicationStatus.textContent = "Communication: Sending ledOn...";
-        fetch("http://192.168.1.101/ledOn")
+        fetch("http://192.168.1.104/ledOn")
             .then(response => response.text())
             .then(data => {
-                console.log(data);
-                buttonstatus.textContent = "Button Status: ON";
+                console.log("route data /ledOn: ", data);
+                //buttonstatus.textContent = "Button Status: ON";
                 communicationStatus.textContent = "Communication: successful sending";
-                ledIndicator.style.backgroundColor = "green";
-                ledStatus.textContent = "ON";
+                //ledIndicator.style.backgroundColor = "green";
+                //ledStatus.textContent = "ON";
             });
+        fetch("http://192.168.1.104/status")
+            .then(response => response.json())
+            .then(data => {
+                ledIndicator.style.backgroundColor = data.color;
+                ledStatus.textContent = data.led;
+            })
+        
     }
 );
 buttonOff.addEventListener(
     "click",
     () => {
         OffCount++;
+        buttonstatus.textContent = "Button Status: OFF"
         ButtonCountOff.textContent = "OFF press count: " + OffCount;
         communicationStatus.textContent = "Communication: Sending ledOff...";
-        fetch("http://192.168.1.101/ledOff")
+        fetch("http://192.168.1.104/ledOff")
             .then(response => response.text())
             .then(data => {
-                console.log(data);
-                buttonstatus.textContent = "Button Status: OFF";
+                console.log("route data /ledOff: ", data);
+                //buttonstatus.textContent = "Button Status: OFF";
                 communicationStatus.textContent = "Communication: successful sending";
-                ledIndicator.style.backgroundColor = "gray";
-                ledStatus.textContent = "OFF";
+                //ledIndicator.style.backgroundColor = "gray";
+                //ledStatus.textContent = "OFF";
             });
+        fetch("http://192.168.1.104/status")
+            .then(response => response.json())
+            .then(data => {
+                ledIndicator.style.backgroundColor = data.color;
+                ledStatus.textContent = data.led;
+            })
+        
     }
 );
 
