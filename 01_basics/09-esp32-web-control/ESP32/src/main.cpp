@@ -1,57 +1,51 @@
 #include <Arduino.h>
 #include <WiFi.h>
-#include <WebServer.h>
 #include <ArduinoJson.h>
-
-#define LED_pin 2
+#include <WebSocketsServer.h>
 
 #define net_name "UKYV" // Your net_name
 #define password "igor2616" // Your password
 
-WebServer server(80);
+WebSocketsServer webSocket(81);
 
 bool WiFi_flag = 0;
-bool LED_status = false;
 
-void handleLedOn() {
-    LED_status = true;
-    digitalWrite(LED_pin, HIGH);
-    server.sendHeader("Access-Control-Allow-Origin", "*");
-    server.send(200, "text/plain", "OK");
-}
-void handleLedOff() {
-    LED_status = false;
-    digitalWrite(LED_pin, LOW);
-    server.sendHeader("Access-Control-Allow-Origin", "*");
-    server.send(200, "text/plain", "OK");
-}
+void onWebSocketEvent(
+    uint8_t num,
+    WStype_t type,
+    uint8_t * payload,
+    size_t length
+){
+    switch(type) {
 
-void handleStatus () {
-    String json;
-    server.sendHeader("Access-Control-Allow-Origin", "*");
-    JsonDocument doc_status;
-    if (LED_status) {
-        doc_status["led"] = "ON";
-        doc_status["color"] = "green";
+        case WStype_CONNECTED:
+            Serial.println("Client connected");
+            webSocket.sendTXT(num, "connected");
+            break;
+
+        case WStype_DISCONNECTED:
+            Serial.println("Client disconnected");
+            break;
+
+        case WStype_TEXT: {
+            String msg = String((char*)payload).substring(0, length);
+            String json;
+            JsonDocument doc;
+            doc["input"] = msg;
+            doc["length"] = length;
+            serializeJson(doc, json);
+            webSocket.sendTXT(num, json);
+            break;
+        }
     }
-    else {
-        doc_status["led"] = "OFF";
-        doc_status["color"] = "gray";
-    }
-    serializeJson(doc_status, json);
-    server.send(200, "application/json", json);
 }
 
 void setup() {
     Serial.begin(115200);
-    pinMode(LED_pin, OUTPUT);
 
     WiFi.begin(net_name, password);
-    server.begin();
-
-    server.on("/ledOn", handleLedOn);
-    server.on("/ledOff", handleLedOff);
-    server.on("/status", handleStatus);
+    webSocket.begin();
+    webSocket.onEvent(onWebSocketEvent);
 
 }
 
@@ -61,5 +55,6 @@ void loop() {
         Serial.println("successful connection");
         Serial.println(WiFi.localIP());
     }
-    server.handleClient();
+
+    webSocket.loop();
 }
